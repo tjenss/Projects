@@ -26,9 +26,12 @@ TIRES = {
 # Strategy plan: tuples of (lap to pit, tire type)
 strategy_plan = [
     (0, 'Medium'),
-    (25, 'Medium'),
+    (25, 'Soft'),
     (41, 'Soft')
 ]
+
+# Fuel impact per lap (in seconds)
+FUEL_PENALTY_PER_LAP = 0.035  # roughly 2s over 58 laps
 
 # --- Simulation Code ---
 def simulate_race():
@@ -58,6 +61,10 @@ def simulate_race():
         # Apply degradation
         deg_rate = TIRES[current_tire][1]
         lap_time = base_time + (tire_age * deg_rate)
+
+        # Apply fuel penalty (starts high and drops each lap)
+        fuel_penalty = FUEL_PENALTY_PER_LAP * (TOTAL_LAPS - lap)
+        lap_time += fuel_penalty
 
         # Apply safety car modifier
         if lap in SAFETY_CAR_LAPS:
