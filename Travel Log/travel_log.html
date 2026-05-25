@@ -1292,13 +1292,18 @@
   :root[data-view="mobile"] .map-title,
   :root[data-view="mobile"] .map-status { font-size: 10px; letter-spacing: 0.1em; }
   :root[data-view="mobile"] .map-legend {
+    display: flex;
     flex-wrap: wrap;
-    gap: 6px 10px;
+    gap: 4px 10px;
     font-size: 9px;
+    line-height: 1.4;
     bottom: 8px;
     left: 8px;
+    right: 8px;
     padding: 6px 8px;
+    justify-content: center;
   }
+  :root[data-view="mobile"] .legend-item { gap: 6px; }
   :root[data-view="mobile"] .new-country-callout {
     font-size: 10px;
     padding: 6px 10px;
@@ -1874,6 +1879,10 @@ function applyView(view) {
   viewLabel.textContent = isMobile ? 'Mobile' : 'Desktop';
   document.getElementById('desktop-icon').style.display = isMobile ? 'none' : 'block';
   document.getElementById('mobile-icon').style.display  = isMobile ? 'block' : 'none';
+  // Anchor the map to the top in mobile so Antarctica isn't pushed below the
+  // legend. Desktop keeps the original centered framing.
+  const svg = document.getElementById('map-svg');
+  if (svg) svg.setAttribute('preserveAspectRatio', isMobile ? 'xMidYMin meet' : 'xMidYMid meet');
 }
 viewToggle.addEventListener('click', () => {
   const cur = document.documentElement.getAttribute('data-view') || 'desktop';
