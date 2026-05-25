@@ -1,31 +1,37 @@
 import fastf1
-from fastf1 import plotting
-from fastf1.plotting import setup_mpl
-import matplotlib.pyplot as plt
+import os
+import sqlite3
 import os
 
 # Create cache folder if it doesn't exist
-# if not os.path.exists('./fastf1_cache'):
-#     os.makedirs('./fastf1_cache')
+if not os.path.exists('./fastf1_cache'):
+    os.makedirs('./fastf1_cache')
 
 # Enable cache
 fastf1.Cache.enable_cache('./fastf1_cache')
 
-# Load a race session
-session = fastf1.get_session(2023, 'Silverstone', 'R')  # 'R' = race
+session = fastf1.get_session(2023, 'Silverstone', 'R')
 session.load()
 
-# Choose a driver
-ver_data = session.laps.pick_driver('VER')
+laps = session.laps
 
-# Pick a specific lap
-lap = ver_data.pick_fastest()
-tel = lap.get_telemetry()
+df = laps[['Driver', 'LapNumber', 'Compound', 'TyreLife', 'TrackStatus',
+           'IsAccurate', 'LapTime', 'Sector1Time', 'Sector2Time', 'Sector3Time']].copy()
 
-# Inspect telemetry (speed, throttle, gear, etc.)
-print(tel.head())
+time_cols = ['LapTime', 'Sector1Time', 'Sector2Time', 'Sector3Time']
+for col in time_cols:
+    df[col] = df[col].dt.total_seconds()
 
-# Visualize Telemetry Channel
-tel.plot(x='Distance', y='Speed')
-plt.title('Verstappen Fastest Lap Speed Trace')
-plt.show()
+# Connect to SQLite database (creates file if it doesn't exist)
+conn = sqlite3.connect('f1_race_data.db')
+
+# Insert data (replaces table if exists)
+df.to_sql('lap_data', conn, if_exists='replace', index=False)
+
+# Confirm table structure
+cursor = conn.cursor()
+cursor.execute("PRAGMA table_info(lap_data);")
+print(cursor.fetchall())
+
+conn.commit()
+conn.close()
