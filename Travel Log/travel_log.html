@@ -1306,9 +1306,10 @@
   :root[data-view="mobile"] .legend-item { gap: 6px; }
   :root[data-view="mobile"] .new-country-callout {
     font-size: 10px;
-    padding: 6px 10px;
+    padding: 6px 14px;
     top: 10px;
-    left: 10px;
+    /* Inherit left:50% + translateX(-50%) from the base rule so the callout
+       stays centered horizontally (was being yanked to left:10px before). */
   }
 
   :root[data-view="mobile"] .sidebar {
@@ -1879,10 +1880,8 @@ function applyView(view) {
   viewLabel.textContent = isMobile ? 'Mobile' : 'Desktop';
   document.getElementById('desktop-icon').style.display = isMobile ? 'none' : 'block';
   document.getElementById('mobile-icon').style.display  = isMobile ? 'block' : 'none';
-  // Anchor the map to the top in mobile so Antarctica isn't pushed below the
-  // legend. Desktop keeps the original centered framing.
   const svg = document.getElementById('map-svg');
-  if (svg) svg.setAttribute('preserveAspectRatio', isMobile ? 'xMidYMin meet' : 'xMidYMid meet');
+  if (svg) svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
 }
 viewToggle.addEventListener('click', () => {
   const cur = document.documentElement.getAttribute('data-view') || 'desktop';
