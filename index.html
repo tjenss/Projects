@@ -488,9 +488,9 @@
   }
 
   (function () {
+    // Default to dark; only honour an explicit saved preference.
     const saved = localStorage.getItem('theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    const theme = saved || (prefersDark ? 'dark' : 'light');
+    const theme = (saved === 'light' || saved === 'dark') ? saved : 'dark';
     document.documentElement.setAttribute('data-theme', theme);
     const isDark = theme === 'dark';
     document.getElementById('theme-label').textContent = isDark ? 'Light' : 'Dark';

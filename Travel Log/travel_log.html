@@ -788,19 +788,40 @@
   .ticket.mode-car .t-bottom { padding-left: 26px; }
   .ticket.mode-train .t-bottom,
   .ticket.mode-ship .t-bottom { padding-bottom: 18px; }
+  /* The bottom-left slot was formerly a barcode. It is now empty by default,
+     and only renders content when the leg has layover=1 (transfer indicator). */
   .t-barcode {
     display: flex;
     align-items: center;
-    gap: 3px;
     flex: 1;
     overflow: hidden;
     height: 22px;
   }
-  .t-barcode span {
-    display: block;
-    background: currentColor;
-    height: 100%;
-    flex-shrink: 0;
+  /* Transfer indicator — shown only when the leg ends in a layover.
+     Uses the airplane glyph with U+FE0E variation selector to force the text/
+     glyph presentation (so the browser does NOT swap in a color emoji). */
+  .t-barcode .t-transfer {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: currentColor;
+    opacity: 0.78;
+    line-height: 1;
+    font-variant-emoji: text;
+  }
+  .t-barcode .t-transfer .t-transfer-glyph {
+    font-family: 'JetBrains Mono', 'Space Grotesk', sans-serif;
+    font-size: 14px;
+    font-variant-emoji: text;
+  }
+  .t-barcode .t-transfer .t-transfer-arrow {
+    font-size: 14px;
+    opacity: 0.65;
   }
   .t-vehicle {
     font-family: 'JetBrains Mono', monospace;
@@ -1193,6 +1214,168 @@
     font-size: 10px; letter-spacing: 0.12em;
     text-transform: uppercase; color: var(--text-faint);
   }
+
+  /* ====================== MOBILE VIEW PREVIEW ======================
+     Activated when [data-view="mobile"] is set on <html>. Constrains the
+     page width and restacks every module so the layout matches what an
+     iPhone 16 Pro user would see (viewport ~402px wide). The same rules
+     fire on real mobile browsers via the (max-width: 480px) media query
+     below, so the toggle and real-mobile behave identically. */
+  :root[data-view="mobile"] {
+    --layout-height: auto;
+    --ticket-height: 260px;
+    --layout-gap: 14px;
+  }
+  :root[data-view="mobile"] body {
+    background:
+      radial-gradient(ellipse at 10% 0%, rgba(0, 212, 255, 0.04), transparent 50%),
+      radial-gradient(ellipse at 100% 100%, rgba(251, 191, 36, 0.03), transparent 50%),
+      var(--bg);
+  }
+  :root[data-view="mobile"] .container {
+    max-width: 402px;
+    margin: 0 auto;
+    padding: 14px 14px 28px;
+    box-shadow: 0 0 0 1px var(--border);
+    min-height: 100vh;
+  }
+  :root[data-view="mobile"] header {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding-bottom: 14px;
+    margin-bottom: 16px;
+  }
+  :root[data-view="mobile"] .brand-logo { width: 36px; height: 36px; }
+  :root[data-view="mobile"] .brand-text h1 { font-size: 18px; }
+  :root[data-view="mobile"] .brand-text .subtitle { font-size: 9px; }
+  :root[data-view="mobile"] .header-right { gap: 8px; flex-wrap: wrap; }
+  :root[data-view="mobile"] .theme-toggle { padding: 6px 10px; font-size: 11px; }
+  :root[data-view="mobile"] .theme-toggle svg { width: 14px; height: 14px; }
+
+  :root[data-view="mobile"] .flight-board {
+    padding: 12px 14px;
+    margin-bottom: 16px;
+  }
+  :root[data-view="mobile"] .fb-banner {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+  }
+  :root[data-view="mobile"] .fb-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, auto);
+    gap: 8px 16px;
+  }
+  :root[data-view="mobile"] .fb-cell { padding: 4px 0; gap: 8px; }
+  :root[data-view="mobile"] .fb-cell .label { font-size: 9px; letter-spacing: 0.1em; }
+  :root[data-view="mobile"] .fb-cell .value { font-size: 18px; }
+
+  :root[data-view="mobile"] .layout {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  :root[data-view="mobile"] .map-card { height: 340px; border-radius: 12px; }
+  :root[data-view="mobile"] .map-header { padding: 10px 14px; }
+  :root[data-view="mobile"] .map-title,
+  :root[data-view="mobile"] .map-status { font-size: 10px; letter-spacing: 0.1em; }
+  :root[data-view="mobile"] .map-legend {
+    flex-wrap: wrap;
+    gap: 6px 10px;
+    font-size: 9px;
+    bottom: 8px;
+    left: 8px;
+    padding: 6px 8px;
+  }
+  :root[data-view="mobile"] .new-country-callout {
+    font-size: 10px;
+    padding: 6px 10px;
+    top: 10px;
+    left: 10px;
+  }
+
+  :root[data-view="mobile"] .sidebar {
+    position: static;
+    height: auto;
+    gap: 14px;
+  }
+  :root[data-view="mobile"] .ticket {
+    height: 260px;
+    border-radius: 10px;
+  }
+  :root[data-view="mobile"] .t-top { padding: 10px 14px; gap: 10px; }
+  :root[data-view="mobile"] .t-logo { width: 38px; height: 38px; font-size: 13px; }
+  :root[data-view="mobile"] .t-operator-name { font-size: 12px; }
+  :root[data-view="mobile"] .t-service-num { font-size: 10px; }
+  :root[data-view="mobile"] .t-header-label { font-size: 9px; }
+  :root[data-view="mobile"] .t-header-label strong { font-size: 11px; }
+  :root[data-view="mobile"] .t-main { padding: 12px 14px; }
+  :root[data-view="mobile"] .t-code { font-size: 26px; letter-spacing: 0.04em; }
+  :root[data-view="mobile"] .t-name { font-size: 10px; }
+  :root[data-view="mobile"] .t-city { font-size: 9px; }
+  :root[data-view="mobile"] .t-divider-icon { font-size: 22px; }
+  :root[data-view="mobile"] .t-meta { padding: 8px 14px; gap: 6px; }
+  :root[data-view="mobile"] .t-meta-item .label { font-size: 9px; }
+  :root[data-view="mobile"] .t-meta-item .value { font-size: 12px; }
+  :root[data-view="mobile"] .t-bottom { padding: 8px 14px; }
+  :root[data-view="mobile"] .t-vehicle { font-size: 9px; }
+  :root[data-view="mobile"] .t-barcode .t-transfer { font-size: 10px; letter-spacing: 0.18em; gap: 6px; }
+  :root[data-view="mobile"] .t-barcode .t-transfer .t-transfer-glyph { font-size: 12px; }
+
+  :root[data-view="mobile"] .passport { min-height: 420px; }
+  :root[data-view="mobile"] .passport-cover-header { padding: 14px 16px; }
+  :root[data-view="mobile"] .passport-title { font-size: 16px; }
+  :root[data-view="mobile"] .passport-count { font-size: 11px; }
+  :root[data-view="mobile"] .passport-pages { padding: 14px 16px; }
+  :root[data-view="mobile"] .passport-page-heading { font-size: 9px; margin-bottom: 12px; }
+  :root[data-view="mobile"] .stamps-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  :root[data-view="mobile"] .stamp { width: 60px; height: 60px; }
+  :root[data-view="mobile"] .stamp .flag-emoji { font-size: 20px; }
+  :root[data-view="mobile"] .stamp .stamp-label { font-size: 9px; }
+  :root[data-view="mobile"] .stamp .stamp-year { font-size: 8px; }
+
+  :root[data-view="mobile"] .controls { padding: 14px 14px; border-radius: 10px; }
+  :root[data-view="mobile"] .controls-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    align-items: stretch;
+  }
+  :root[data-view="mobile"] .play-cluster { justify-content: center; }
+  :root[data-view="mobile"] .speed-control { align-items: center; }
+  :root[data-view="mobile"] .timeline-wrap { order: 2; padding: 4px 4px; }
+  :root[data-view="mobile"] .play-cluster { order: 1; }
+  :root[data-view="mobile"] .speed-control { order: 3; }
+  :root[data-view="mobile"] .progress-readout { font-size: 10px; flex-wrap: wrap; gap: 6px; }
+  :root[data-view="mobile"] .current-year-display { font-size: 16px; }
+
+  :root[data-view="mobile"] footer {
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    text-align: center;
+    font-size: 9px;
+  }
+
+  /* Real-mobile breakpoint — applies the same overrides automatically on
+     phone viewports regardless of toggle state. Wrapped so the desktop
+     toggle still wins on a tablet/desktop if a user chose "desktop". */
+  @media (max-width: 480px) {
+    :root:not([data-view="desktop"]) {
+      --layout-height: auto;
+      --ticket-height: 260px;
+      --layout-gap: 14px;
+    }
+    :root:not([data-view="desktop"]) .container { padding: 14px 14px 28px; max-width: 100%; }
+    :root:not([data-view="desktop"]) header { flex-wrap: wrap; gap: 10px; }
+    :root:not([data-view="desktop"]) .fb-grid { grid-template-columns: repeat(2, 1fr); }
+    :root:not([data-view="desktop"]) .layout { grid-template-columns: 1fr; }
+    :root:not([data-view="desktop"]) .map-card { height: 340px; }
+    :root:not([data-view="desktop"]) .sidebar { position: static; height: auto; }
+    :root:not([data-view="desktop"]) .controls-row { grid-template-columns: 1fr; }
+  }
 </style>
 </head>
 <body>
@@ -1210,6 +1393,11 @@
       </div>
     </div>
     <div class="header-right">
+      <button class="theme-toggle" id="view-toggle" title="Toggle desktop / mobile layout">
+        <svg id="desktop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+        <svg id="mobile-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><rect x="6" y="2" width="12" height="20" rx="2"/><path d="M11 18h2"/></svg>
+        <span id="view-label">Desktop</span>
+      </button>
       <button class="theme-toggle" id="theme-toggle">
         <svg id="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
         <svg id="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none;"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -1511,7 +1699,6 @@
   <footer>
     <span>◉ Personal Travel Atlas</span>
     <span>Drag timeline · Space to play · ← → to step</span>
-    <span>Made with Claude</span>
   </footer>
 
 </div>
@@ -1654,6 +1841,31 @@ themeToggle.addEventListener('click', () => {
   document.getElementById('sun-icon').style.display = next === 'dark' ? 'none' : 'block';
 });
 
+// VIEW TOGGLE — desktop layout vs. mobile preview (iPhone 16 Pro baseline,
+// ~402px viewport). Toggles a data-view attribute on <html>; all mobile
+// layout overrides live under :root[data-view="mobile"] in the stylesheet.
+// Choice is persisted in localStorage so a refresh keeps the same view.
+const viewToggle = document.getElementById('view-toggle');
+const viewLabel = document.getElementById('view-label');
+function applyView(view) {
+  document.documentElement.setAttribute('data-view', view);
+  const isMobile = view === 'mobile';
+  viewLabel.textContent = isMobile ? 'Mobile' : 'Desktop';
+  document.getElementById('desktop-icon').style.display = isMobile ? 'none' : 'block';
+  document.getElementById('mobile-icon').style.display  = isMobile ? 'block' : 'none';
+}
+viewToggle.addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-view') || 'desktop';
+  const next = cur === 'mobile' ? 'desktop' : 'mobile';
+  try { localStorage.setItem('travelLogView', next); } catch (e) {}
+  applyView(next);
+});
+try {
+  const saved = localStorage.getItem('travelLogView');
+  if (saved === 'mobile' || saved === 'desktop') applyView(saved);
+  else applyView('desktop');
+} catch (e) { applyView('desktop'); }
+
 // LOAD WORLD MAP
 d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json').then(world => {
   const countriesGeo = topojson.feature(world, world.objects.countries).features;
@@ -1721,16 +1933,18 @@ function init(countryPaths) {
     return { index: i, flight: fl, from: ap1, to: ap2, arc, pathStr: path(arc), ground: isGround(fl.mode) };
   }).filter(Boolean);
 
-  function buildBarcode(seed) {
-    const html = [];
-    let h = 0;
-    for (let i = 0; i < seed.length; i++) h = (h * 31 + seed.charCodeAt(i)) & 0xffffffff;
-    for (let i = 0; i < 36; i++) {
-      h = (h * 1103515245 + 12345) & 0x7fffffff;
-      const w = (h % 4) + 1;
-      html.push(`<span style="width:${w}px;"></span>`);
-    }
-    return html.join('');
+  // Bottom-left slot: blank by default; shows a TRANSFER indicator when this
+  // leg ends in a layover (fl.layover === 1). Glyphs use U+FE0E so the
+  // browser renders them as text characters, not color emoji.
+  const TRANSFER_HTML =
+    '<span class="t-transfer" aria-label="Transfer / layover leg">' +
+      '<span class="t-transfer-glyph">✈︎</span>' +
+      '<span class="t-transfer-arrow">⇢</span>' +
+      '<span class="t-transfer-glyph">✈︎</span>' +
+      '<span>Transfer</span>' +
+    '</span>';
+  function bottomIndicatorHTML(fl) {
+    return fl.layover === 1 ? TRANSFER_HTML : '';
   }
 
   const slider = document.getElementById('slider');
@@ -1814,7 +2028,7 @@ function init(countryPaths) {
     const dateStr = fmtDate(fl.date);
     const dist = fl.miles ? fl.miles.toLocaleString() + ' mi' : '—';
     const dur = formatDuration(fl.mins);
-    const barcode = buildBarcode(fl.mode + (fl.from || '') + (fl.to || '') + fl.date);
+    const bottomHTML = bottomIndicatorHTML(fl);
     const opName = fl.operator_name || '—';
     const opCode = (fl.operator_code || '--').substring(0, 3);
     const opColor = fl.operator_color || '#666';
@@ -1844,7 +2058,7 @@ function init(countryPaths) {
       document.getElementById('bp-distance').textContent = dist;
       document.getElementById('bp-duration').textContent = dur;
       document.getElementById('bp-aircraft').textContent = vehLabel;
-      document.getElementById('bp-barcode').innerHTML = barcode;
+      document.getElementById('bp-barcode').innerHTML = bottomHTML;
     } else if (fl.mode === 'Train') {
       const logo = document.getElementById('tr-logo');
       logo.textContent = opCode;
@@ -1863,7 +2077,7 @@ function init(countryPaths) {
       document.getElementById('tr-distance').textContent = dist;
       document.getElementById('tr-duration').textContent = dur;
       document.getElementById('tr-vehicle').textContent = vehLabel;
-      document.getElementById('tr-barcode').innerHTML = barcode;
+      document.getElementById('tr-barcode').innerHTML = bottomHTML;
     } else if (fl.mode === 'Bus') {
       const logo = document.getElementById('bs-logo');
       logo.textContent = opCode;
@@ -1882,7 +2096,7 @@ function init(countryPaths) {
       document.getElementById('bs-distance').textContent = dist;
       document.getElementById('bs-duration').textContent = dur;
       document.getElementById('bs-vehicle').textContent = vehLabel;
-      document.getElementById('bs-barcode').innerHTML = barcode;
+      document.getElementById('bs-barcode').innerHTML = bottomHTML;
     } else if (fl.mode === 'Car') {
       // Cars typically have no operator code/name from the data, so default the badge to "RT" (road trip)
       const logo = document.getElementById('cr-logo');
@@ -1904,7 +2118,7 @@ function init(countryPaths) {
       // Per spec: car shows mileage with ⛽ icon in the divider
       document.getElementById('cr-fuel').textContent = fl.miles ? `⛽ ${fl.miles.toLocaleString()} mi` : '';
       document.getElementById('cr-vehicle').textContent = vehLabel;
-      document.getElementById('cr-barcode').innerHTML = barcode;
+      document.getElementById('cr-barcode').innerHTML = bottomHTML;
     } else if (fl.mode === 'Ship' || fl.mode === 'Ferry') {
       const isF = (fl.mode === 'Ferry');
       const logo = document.getElementById('sh-logo');
@@ -1925,7 +2139,7 @@ function init(countryPaths) {
       document.getElementById('sh-distance').textContent = dist;
       document.getElementById('sh-duration').textContent = dur;
       document.getElementById('sh-vehicle').textContent = vehLabel;
-      document.getElementById('sh-barcode').innerHTML = barcode;
+      document.getElementById('sh-barcode').innerHTML = bottomHTML;
     }
   }
 
@@ -1990,15 +2204,20 @@ function init(countryPaths) {
       .attr('class', d => 'airport-dot' + (d.groundOnly ? ' ground' : '') + (d.active ? ' active' : ''))
       .attr('r', d => d.active ? (d.groundOnly ? 3 : 4) : (d.groundOnly ? 2 : 2.8));
 
-    // Country coloring — uses ALL visited countries (via dep or arr) regardless of layover.
-    // The map should still show the country as "visited" if you transited it.
+    // Country coloring — passport-eligible only. Same rule as stamps: skip
+    // a transit-only departure, and skip a layover-only arrival. A country
+    // that you only ever transited through never gets highlighted on the map.
     const visitedCC = new Set(['US']);  // seed US
     for (let j = 0; j <= i; j++) {
       const ff = flightData[j].flight;
-      if (ff.from_cc) visitedCC.add(ff.from_cc);
-      if (ff.to_cc) visitedCC.add(ff.to_cc);
+      if (ff.from_cc && !ff._depIsTransit) visitedCC.add(ff.from_cc);
+      if (!ff.layover && ff.to_cc) visitedCC.add(ff.to_cc);
     }
-    const curCC = new Set([cur.from.cc, cur.to.cc].filter(Boolean));
+    // Current-leg highlight respects the same eligibility — a layover destination
+    // or transit departure isn't lit up on the map even while the plane is on it.
+    const curCC = new Set();
+    if (cur.from.cc && !fl._depIsTransit) curCC.add(cur.from.cc);
+    if (cur.to.cc && !fl.layover) curCC.add(cur.to.cc);
     countryPaths
       .classed('visited', d => d.iso2 && visitedCC.has(d.iso2) && !curCC.has(d.iso2))
       .classed('has-flight', d => d.iso2 && curCC.has(d.iso2));
