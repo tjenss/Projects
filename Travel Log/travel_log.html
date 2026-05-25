@@ -1238,7 +1238,19 @@
     padding: 14px 14px 28px;
     box-shadow: 0 0 0 1px var(--border);
     min-height: 100vh;
+    /* Flex column so we can reorder modules (controls between map & sidebar). */
+    display: flex;
+    flex-direction: column;
   }
+  /* Flatten .layout so its children (map-card + sidebar) become direct children
+     of .container and can be reordered alongside .controls. */
+  :root[data-view="mobile"] .layout { display: contents; }
+  :root[data-view="mobile"] header        { order: 1; }
+  :root[data-view="mobile"] .flight-board { order: 2; }
+  :root[data-view="mobile"] .map-card     { order: 3; margin-bottom: 14px; }
+  :root[data-view="mobile"] .controls     { order: 4; margin-top: 0; margin-bottom: 14px; }
+  :root[data-view="mobile"] .sidebar      { order: 5; }
+  :root[data-view="mobile"] footer        { order: 6; }
   :root[data-view="mobile"] header {
     flex-wrap: wrap;
     gap: 10px;
@@ -1368,12 +1380,21 @@
       --ticket-height: 260px;
       --layout-gap: 14px;
     }
-    :root:not([data-view="desktop"]) .container { padding: 14px 14px 28px; max-width: 100%; }
+    :root:not([data-view="desktop"]) .container {
+      padding: 14px 14px 28px;
+      max-width: 100%;
+      display: flex;
+      flex-direction: column;
+    }
     :root:not([data-view="desktop"]) header { flex-wrap: wrap; gap: 10px; }
     :root:not([data-view="desktop"]) .fb-grid { grid-template-columns: repeat(2, 1fr); }
-    :root:not([data-view="desktop"]) .layout { grid-template-columns: 1fr; }
-    :root:not([data-view="desktop"]) .map-card { height: 340px; }
-    :root:not([data-view="desktop"]) .sidebar { position: static; height: auto; }
+    :root:not([data-view="desktop"]) .layout { display: contents; }
+    :root:not([data-view="desktop"]) .map-card { height: 340px; margin-bottom: 14px; order: 3; }
+    :root:not([data-view="desktop"]) .controls { margin-top: 0; margin-bottom: 14px; order: 4; }
+    :root:not([data-view="desktop"]) .sidebar { position: static; height: auto; order: 5; }
+    :root:not([data-view="desktop"]) header { order: 1; }
+    :root:not([data-view="desktop"]) .flight-board { order: 2; }
+    :root:not([data-view="desktop"]) footer { order: 6; }
     :root:not([data-view="desktop"]) .controls-row { grid-template-columns: 1fr; }
   }
 </style>
